@@ -1,4 +1,4 @@
-﻿using Auth.Core.Entity;
+﻿using Auth.DataAcces.Persistence.Entity;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;

@@ -9,8 +9,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Auth.DataAcces", "Auth.Data
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Auth.Application", "Auth.Application\Auth.Application.csproj", "{89C67584-5965-4473-AD0C-18F2BE789214}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Auth.Core", "Auth.Core\Auth.Core.csproj", "{B495D6BD-877B-4984-B991-3D5A0D7B128E}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -29,10 +27,6 @@ Global
 		{89C67584-5965-4473-AD0C-18F2BE789214}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{89C67584-5965-4473-AD0C-18F2BE789214}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{89C67584-5965-4473-AD0C-18F2BE789214}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B495D6BD-877B-4984-B991-3D5A0D7B128E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B495D6BD-877B-4984-B991-3D5A0D7B128E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B495D6BD-877B-4984-B991-3D5A0D7B128E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B495D6BD-877B-4984-B991-3D5A0D7B128E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

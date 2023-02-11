@@ -1,4 +1,4 @@
-﻿using Auth.Core.Entity;
+﻿using Auth.DataAcces.Persistence.Entity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +11,7 @@ namespace Auth.DataAcces.Repository
     {
         Task<T> Create(T entity);
         Task<T> GetById(Guid Id);
-        Task<T> Get();
+        Task<IEnumerable<T>> Get();
         Task<T> Update(T entity);
         Task<T> Delete(T entity);
 

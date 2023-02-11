@@ -1,4 +1,6 @@
-﻿using Auth.Core.Entity;
+﻿using Auth.DataAcces.Persistence;
+using Auth.DataAcces.Persistence.Entity;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,36 +9,19 @@ using System.Threading.Tasks;
 
 namespace Auth.DataAcces.Repository.Impl
 {
-    public class UserRepository : IUserRepository
+    public class UserRepository : BaseRepository<User>, IUserRepository
     {
-        public Task<User> Create(User entity)
+        public UserRepository(ApplicationDbContext db) : base(db) { }
+        public async Task<User> GetOnlineUsers()
         {
             throw new NotImplementedException();
         }
-
-        public Task<User> Delete(User entity)
+        public async Task<User> GetByEmail(string email)
         {
-            throw new NotImplementedException();
-        }
+            var user = await _db.Users.FirstOrDefaultAsync(user => user.Email == email);
+            if (user == null) { return null; }
+            else return user;
 
-        public Task<User> Get()
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<User> GetById(Guid Id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<User> GetOnlineUsers()
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<User> Update(User entity)
-        {
-            throw new NotImplementedException();
         }
     }
 }
