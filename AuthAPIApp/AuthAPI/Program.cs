@@ -1,5 +1,6 @@
 using Auth.Application.Dto;
 using Auth.Application.Helper;
+using Auth.Application.Service.EmailService;
 using Auth.Application.Service.UserService;
 using Auth.DataAcces.Persistence;
 using Auth.DataAcces.Repository;
@@ -33,11 +34,6 @@ builder.Services.AddSwaggerGen(options => {
     });
 });
 
-
-//builder.Services.AddControllers(options =>
-//{
-//    options.Filters.Add(typeof(ValidateModelAttribute));
-//}).
 builder.Services.AddControllers(options =>
 {
     options.Filters.Add(typeof(ValidateModelAttribute));
@@ -73,8 +69,15 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 
+var emailConfig = builder.Configuration
+        .GetSection("MailSettings")
+        .Get<EmailConfig>();
+
+builder.Services.AddSingleton(emailConfig);
+
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IEmailService,EmailService>();
 
 IMapper mapper = MappingConfig.RegisterMaps().CreateMapper();
 builder.Services.AddSingleton(mapper);

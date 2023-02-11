@@ -1,5 +1,6 @@
 ﻿using Auth.Application.Dto;
 using Auth.Application.Helper;
+using Auth.Application.Service.EmailService;
 using Auth.Application.Service.UserService;
 using Auth.DataAcces.Persistence.Entity;
 using Microsoft.AspNetCore.Http;
@@ -12,11 +13,13 @@ namespace AuthAPI.Controllers
     public class AuthController : ControllerBase
     {
         private readonly IUserService _userService;
+        private readonly IEmailService _emailService;
         private readonly IConfiguration _configuration;
 
-        public AuthController(IUserService userService, IConfiguration configuration)
+        public AuthController(IUserService userService, IEmailService emailService, IConfiguration configuration)
         {
             _userService = userService;
+            _emailService = emailService;
             _configuration = configuration;
         }
         [HttpPost("register")]
@@ -27,12 +30,18 @@ namespace AuthAPI.Controllers
                 ResponseDto response = (ResponseDto)await _userService.Create(user);
                 if(response.Success)
                 {
-                    return BadRequest(response);
+                    //Email Service!!
+                    var message = new Message(
+                        new string[] { "oguzliv@gmail.com" },
+                        "Test email",
+                        "This is the content from our email.");
+
+                    _emailService.SendEmail(message);
+                    return Ok(response);
                 }
                 else
                 {
-                    //Email Service!!
-                    return Ok(response);
+                    return BadRequest(response);
 
                 }
             }catch(Exception ex)
