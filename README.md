@@ -7,7 +7,7 @@
 <ul>
   <li>First download postgresql and configure it according to your machine.</li>
   <li>After installation, save postgresql host, username and password data. appsettings.json has the configuration info, change it respectively.</li>
-  <li>open Package Manager Console and write add-migration <migration-name> then update-database</li>
+  <li>open Package Manager Console and write add-migration <b>migration_name</b> then update-database</li>
   <li>After getting no errors, you run the application and test the end points by using POSTMAN</li>
 </ul>
 
