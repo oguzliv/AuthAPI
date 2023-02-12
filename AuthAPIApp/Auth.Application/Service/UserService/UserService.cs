@@ -22,7 +22,7 @@ namespace Auth.Application.Service.UserService
             _userRepository= userRepository;
             _mapper= mapper;
         }
-        public async Task<object> Create(RegisterDto user)
+        public async Task<object> Create(RegisterModel user)
         {
             var _user = await _userRepository.GetByEmail(user.Email);
 
@@ -39,30 +39,16 @@ namespace Auth.Application.Service.UserService
 
                 if (await _userRepository.Create(_user) != null)
                 {
-                    return new RegisterResponseDto()
-                    {
-                        Success = true,
-                        Email = user.Email,
-                        Token = _user.VerificationToken,
-                        ErrorMessage = ""
-                    };
+                    return _mapper.Map<RegisterDto>(_user);
                 }
                 else
                 {
-                    return new RegisterResponseDto()
-                    {
-                        Success = false,
-                        ErrorMessage = "Could not created user."
-                    };
+                    return false;
                 }
             }
             else
             {
-                return new RegisterResponseDto()
-                {
-                    Success = false,
-                    ErrorMessage = "User already exists."
-                };
+                return null;
             }
         }
 
@@ -72,19 +58,19 @@ namespace Auth.Application.Service.UserService
             return _user;
         }
 
-        public async Task<object> ResetPassword(ResetPasswordDto newPassword)
+        public async Task<object> ResetPassword(ResetPasswordModel newPassword)
         {
             var _user = await _userRepository.GetByEmail(newPassword.Email);
 
             if (_user != null)
             {
-                _user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(newPassword.NewPassword);
+                _user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(newPassword.Password);
                 await _userRepository.Update(_user);
-                return new BaseResponseDto() { Success = true };
+                return _mapper.Map<UserDto>(_user);
             }
             else
             {
-                return new BaseResponseDto() { Success = false, ErrorMessage="User not found"};
+                return false;
             }
         }
 
@@ -97,35 +83,86 @@ namespace Auth.Application.Service.UserService
                 user.VerifiedAt = DateTime.UtcNow;
                 user.VerificationToken = "";
                 await _userRepository.Update(user);
-                return new BaseResponseDto()
-                {
-                    Success = true,
-                };
+                return _mapper.Map<UserDto>(user);
             }
             else if (user.IsVerified)
             {
-                return new BaseResponseDto()
-                {
-                    Success = false,
-                    ErrorMessage = "User verified already"
-                };
+                return null;
             }
             else
             {
-                return new BaseResponseDto()
-                {
-                    Success = false,
-                    ErrorMessage = "User is not found"
-                }; ;
+                return false;
             }
         }
+
+        public async Task<object> GetUserById(Guid id)
+        {
+            var user = await _userRepository.GetById(id);
+            return _mapper.Map<UserDto>(user);
+        }
+
+        public async Task<object> Get()
+        {
+            var users = await _userRepository.Get();
+            return _mapper.Map<List<UserDto>>(users);
+        }
+
+        public async Task<object> Update(Guid id ,UpdateUserModel user)
+        {
+            var _user = await _userRepository.GetById(id);
+            if (_user == null)
+                return null;
+
+            _user.Name = user.Name;
+            _user.Surname = user.Surname;
+            _user.Email = user.Email;
+            _user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(user.Password);
+
+            await _userRepository.Update(_user);
+            return _mapper.Map<UserDto>(_user);
+        }
+
+        public async Task<bool> Delete(Guid id)
+        {
+            User user = await _userRepository.GetById(id);
+            if (user == null)
+            {
+                return false;
+            }
+            else
+            {
+                var removed = await _userRepository.Delete(user);
+                return true;
+            }
+        }
+        public async Task<object> GetOnlineUsers()
+        {
+           var users = await _userRepository.GetOnlineUsers();
+           return _mapper.Map<List<UserDto>>(users); 
+        }
+
+        public async Task<object> GetNotVerified()
+        {
+            var users = await _userRepository.GetNotVerified();
+            return _mapper.Map<List<UserDto>>(users);
+        }
+
+        public async Task<object> GetLoginTime()
+        {
+            var loginTimes = await _userRepository.GetLoginTime();
+            return loginTimes;
+        }
+
         private static string TokenGenerator()
         {
             Guid g = Guid.NewGuid();
             string GuidString = Convert.ToBase64String(g.ToByteArray());
             GuidString = GuidString.Replace("=", "");
             GuidString = GuidString.Replace("+", "");
+            GuidString = GuidString.Replace("/", "");
+            GuidString = GuidString.Replace(@"\", "");
             return GuidString;
         }
+
     }
 }

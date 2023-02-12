@@ -11,7 +11,9 @@ namespace Auth.DataAcces.Repository
     {
         Task<User> GetByEmail(string email);
         Task<User> GetByToken(string token);
-        Task<User> GetOnlineUsers();
+        Task<IEnumerable<User>> GetOnlineUsers();
+        Task<IEnumerable<User>> GetNotVerified();
+        Task<object> GetLoginTime();
 
     }
 }

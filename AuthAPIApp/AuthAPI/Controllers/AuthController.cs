@@ -1,4 +1,5 @@
-﻿using Auth.Application.Dto.Request;
+﻿using Auth.Application.Dto;
+using Auth.Application.Dto.Request;
 using Auth.Application.Dto.Response;
 using Auth.Application.Helper;
 using Auth.Application.Service.EmailService;
@@ -24,29 +25,29 @@ namespace AuthAPI.Controllers
             _configuration = configuration;
         }
         [HttpPost("register")]
-        public async Task<object> Register([FromBody] RegisterDto user)
+        public async Task<object> Register([FromBody] RegisterModel user)
         {
             try
             {
-                RegisterResponseDto response = (RegisterResponseDto)await _userService.Create(user);
-                if(response.Success)
+                RegisterDto _user = (RegisterDto)await _userService.Create(user);
+                if(_user != null)
                 {
                     //Email Service!!
                     var root = _configuration.GetSection("Root:BaseUrl").Value;
                     var message = new Message(
                         new string[] { user.Email },
                         "Verification email",
-                        "Verification token is : " + response.Token
+                        "Verification token is : " + _user.VerificationToken
                         ) ;
 
                     await _emailService.SendEmail(message);
 
                     //_emailService.SendEmail(message);
-                    return Ok(response);
+                    return Ok(_user);
                 }
                 else
                 {
-                    return BadRequest(response);
+                    return BadRequest(_user);
 
                 }
             }catch(Exception ex)
@@ -55,13 +56,13 @@ namespace AuthAPI.Controllers
             }
         }
         [HttpPost("{token}")]
-        public async Task<object> Verify([FromBody] string token)
+        public async Task<object> Verify([FromRoute] string token)
         {
 
             try
             {
-                BaseResponseDto response = (BaseResponseDto)await _userService.Verify(token);
-                if (response.Success)
+                var response = await _userService.Verify(token);
+                if (response != null)
                 {
                     return Ok(response);
                 }
@@ -76,7 +77,7 @@ namespace AuthAPI.Controllers
             }
         }
         [HttpPost("login")]
-        public async Task<object> Login([FromBody] LoginDto user)
+        public async Task<object> Login([FromBody] LoginModel user)
         {
             try
             {
@@ -100,7 +101,7 @@ namespace AuthAPI.Controllers
             }
         }
         [HttpPatch()]
-        public async Task<object> ResetPassword([FromBody] ResetPasswordDto newPassword)
+        public async Task<object> ResetPassword([FromBody] ResetPasswordModel newPassword)
         {
             try
             {

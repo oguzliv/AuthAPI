@@ -1,4 +1,5 @@
-﻿using Auth.Application.Dto.Request;
+﻿using Auth.Application.Dto;
+using Auth.Application.Dto.Request;
 using Auth.Application.Dto.Response;
 using Auth.DataAcces.Persistence.Entity;
 using AutoMapper;
@@ -16,8 +17,10 @@ namespace Auth.Application.Helper
         {
             var mappingConfig = new MapperConfiguration(config =>
             {
-                config.CreateMap<User, LoginDto>().ReverseMap(); 
+                config.CreateMap<User, UserDto>().ReverseMap();
                 config.CreateMap<User, RegisterDto>().ReverseMap();
+                config.CreateMap<User, LoginModel>().ReverseMap(); 
+                config.CreateMap<User, RegisterModel>().ReverseMap();
             });
             return mappingConfig;
         }

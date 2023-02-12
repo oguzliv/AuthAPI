@@ -42,8 +42,9 @@ builder.Services.AddControllers(options =>
     option.SerializerSettings.MissingMemberHandling = MissingMemberHandling.Error;
 }).AddFluentValidation(fv =>
 {
-    fv.RegisterValidatorsFromAssemblyContaining<RegisterDto>();
-    fv.RegisterValidatorsFromAssemblyContaining<LoginDto>();
+    fv.RegisterValidatorsFromAssemblyContaining<RegisterModel>();
+    fv.RegisterValidatorsFromAssemblyContaining<LoginModel>();
+    fv.RegisterValidatorsFromAssemblyContaining<UpdateUserModel>();
     //fv.RegisterValidatorsFromAssemblyContaining<LoginDtoValidatior>();
     //fv.RegisterValidatorsFromAssemblyContaining<CustomerUpdateDtoValidator>();
     //fv.RegisterValidatorsFromAssemblyContaining<UserDtoValidator>();

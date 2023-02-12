@@ -12,9 +12,10 @@ namespace Auth.DataAcces.Repository.Impl
     public class UserRepository : BaseRepository<User>, IUserRepository
     {
         public UserRepository(ApplicationDbContext db) : base(db) { }
-        public async Task<User> GetOnlineUsers()
+        public async Task<IEnumerable<User>> GetOnlineUsers()
         {
-            throw new NotImplementedException();
+            var onlineUsers = await _db.Users.Where((user => (DateTime.UtcNow - user.VerifiedAt).Hours < 24)).ToListAsync();
+            return onlineUsers;
         }
         public async Task<User> GetByEmail(string email)
         {
@@ -29,6 +30,30 @@ namespace Auth.DataAcces.Repository.Impl
             var user = await _db.Users.FirstOrDefaultAsync(user => user.VerificationToken == token);
             if (user == null) { return null; }
             else return user;
+        }
+
+        public async Task<IEnumerable<User>> GetNotVerified()
+        {
+            var onlineUsers = await _db.Users
+                .Where((user => (DateTime.UtcNow - user.CreatedAt).Hours > 24 && user.IsVerified == false))
+                .ToListAsync();
+            return onlineUsers;
+        }
+        public async Task<object> GetLoginTime()
+        {
+            double totalTime = 0;
+            var loginTimes = await _db.Users.
+                Where(user => user.IsVerified == true).
+                Select(user => new { (user.VerifiedAt - user.CreatedAt).Minutes }).
+                ToListAsync();
+
+            foreach(var t in loginTimes)
+            {
+                totalTime += t.Minutes;
+            }
+
+             return totalTime/loginTimes.Count/60;
+
         }
     }
 }
