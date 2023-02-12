@@ -28,7 +28,6 @@ namespace Auth.DataAcces.Persistence.Entity
         public bool IsAdmin { get; set; }
 
         public DateTime CreatedAt { get; set; }
-        public bool IsVerificationMailSent { get; set; }
         public bool IsVerified { get; set; }
     }
 }

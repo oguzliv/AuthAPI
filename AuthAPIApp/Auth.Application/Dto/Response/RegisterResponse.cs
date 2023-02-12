@@ -4,11 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Auth.Application.Dto
+namespace Auth.Application.Dto.Response
 {
-    public class LoginDto
+    public class RegisterResponse : BaseDto
     {
+        public Guid Id { get; set; }
         public string Email { get; set; }
-        public string Password { get; set; }
     }
 }

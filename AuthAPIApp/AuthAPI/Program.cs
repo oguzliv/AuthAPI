@@ -1,4 +1,4 @@
-using Auth.Application.Dto;
+using Auth.Application.Dto.Request;
 using Auth.Application.Helper;
 using Auth.Application.Service.EmailService;
 using Auth.Application.Service.UserService;
@@ -77,7 +77,7 @@ builder.Services.AddSingleton(emailConfig);
 
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
-builder.Services.AddScoped<IEmailService,EmailService>();
+builder.Services.AddScoped<IEmailService, EmailService>();
 
 IMapper mapper = MappingConfig.RegisterMaps().CreateMapper();
 builder.Services.AddSingleton(mapper);

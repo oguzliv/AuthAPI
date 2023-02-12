@@ -1,4 +1,5 @@
-﻿using Auth.Application.Dto;
+﻿using Auth.Application.Dto.Request;
+using Auth.Application.Dto.Response;
 using Auth.DataAcces.Persistence.Entity;
 using AutoMapper;
 using System;

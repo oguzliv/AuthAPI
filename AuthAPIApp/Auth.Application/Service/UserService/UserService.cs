@@ -1,4 +1,6 @@
 ﻿using Auth.Application.Dto;
+using Auth.Application.Dto.Request;
+using Auth.Application.Dto.Response;
 using Auth.DataAcces.Persistence.Entity;
 using Auth.DataAcces.Repository;
 using AutoMapper;
@@ -31,15 +33,17 @@ namespace Auth.Application.Service.UserService
                     _user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(user.Password);
                     _user.IsAdmin = user.IsAdmin ? true : false;
                     _user.IsVerified = false;
-                    _user.IsVerificationMailSent = false;
                     _user.Id = Guid.NewGuid();
                     _user.CreatedAt = DateTime.UtcNow;
+                   
 
                     if(await _userRepository.Create(_user) != null)
                     {
-                        return new ResponseDto()
+                        return new RegisterResponse()
                         {
                             Success= true,
+                            Email = user.Email,
+                            Id = _user.Id,
                             ErrorMessage = ""
                         };
                     }
@@ -48,6 +52,7 @@ namespace Auth.Application.Service.UserService
                         return new ResponseDto()
                         {
                             Success = true,
+                            Data = null,
                             ErrorMessage = "Could not created user."
                         };
                     }
@@ -75,6 +80,47 @@ namespace Auth.Application.Service.UserService
 
         {
             throw new NotImplementedException();
+        }
+
+        public async Task<object> Verify(Guid id)
+        {
+            try
+            {
+                User user = await _userRepository.GetById(id);
+                if (user != null)
+                {
+                    user.IsVerified = true;
+                    await _userRepository.Update(user);
+                    return new BaseDto()
+                    {
+                        Success = true,
+                    }; 
+                }
+                else if (user.IsVerified)
+                {
+                    return new BaseDto()
+                    {
+                        Success = true,
+                        ErrorMessage = "User verified already"
+                    };
+                }
+                else
+                {
+                    return new BaseDto()
+                    {
+                        Success = false,
+                        ErrorMessage = "User is not found"
+                    }; ;
+                }
+            }
+            catch(Exception ex)
+            {
+                return new BaseDto()
+                {
+                    Success = false,
+                    ErrorMessage = ex.Message
+                }; ;
+            }
         }
     }
 }

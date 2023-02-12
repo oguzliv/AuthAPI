@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Auth.Application.Dto
+namespace Auth.Application.Service.EmailService
 {
     public class Message
     {
@@ -15,7 +15,7 @@ namespace Auth.Application.Dto
         public Message(IEnumerable<string> to, string subject, string content)
         {
             To = new List<MailboxAddress>();
-            To.AddRange(to.Select(x => new MailboxAddress("test",x)));
+            To.AddRange(to.Select(x => new MailboxAddress("test", x)));
             Subject = subject;
             Content = content;
         }

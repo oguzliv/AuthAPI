@@ -1,5 +1,4 @@
-﻿using Auth.Application.Dto;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,6 +8,6 @@ namespace Auth.Application.Service.EmailService
 {
     public interface IEmailService
     {
-        void SendEmail(Message message);
+        Task SendEmail(Message message);
     }
 }

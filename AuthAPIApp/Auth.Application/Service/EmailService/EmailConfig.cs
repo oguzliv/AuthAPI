@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Auth.Application.Dto
+namespace Auth.Application.Service.EmailService
 {
     public class EmailConfig
     {

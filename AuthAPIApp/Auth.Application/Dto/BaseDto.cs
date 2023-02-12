@@ -6,7 +6,9 @@ using System.Threading.Tasks;
 
 namespace Auth.Application.Dto
 {
-    internal class UserDto
+    public class BaseDto
     {
+        public bool Success { get; set; }
+        public string ErrorMessage { get; set; }
     }
 }

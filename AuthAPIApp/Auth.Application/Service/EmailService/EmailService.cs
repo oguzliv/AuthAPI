@@ -1,5 +1,4 @@
-﻿using Auth.Application.Dto;
-using MailKit.Net.Smtp;
+﻿using MailKit.Net.Smtp;
 using MailKit.Security;
 using Microsoft.Extensions.Options;
 using MimeKit;
@@ -18,10 +17,10 @@ namespace Auth.Application.Service.EmailService
         {
             _emailConfig = emailConfig;
         }
-        public void SendEmail(Message message)
+        public async Task SendEmail(Message message)
         {
             var emailMessage = CreateEmailMessage(message);
-            Send(emailMessage);
+            await Send(emailMessage);
         }
         private MimeMessage CreateEmailMessage(Message message)
         {
@@ -32,7 +31,7 @@ namespace Auth.Application.Service.EmailService
             emailMessage.Body = new TextPart(MimeKit.Text.TextFormat.Text) { Text = message.Content };
             return emailMessage;
         }
-        private void Send(MimeMessage mailMessage)
+        private async Task Send(MimeMessage mailMessage)
         {
             using (var client = new SmtpClient())
             {
@@ -41,9 +40,9 @@ namespace Auth.Application.Service.EmailService
                     client.Connect(_emailConfig.SmtpServer, _emailConfig.Port, true);
                     client.AuthenticationMechanisms.Remove("XOAUTH2");
                     client.Authenticate(_emailConfig.UserName, _emailConfig.Password);
-                    client.Send(mailMessage);
+                    await client.SendAsync(mailMessage);
                 }
-                catch
+                catch(Exception ex) 
                 {
                     //log an error message or throw an exception or both.
                     throw;

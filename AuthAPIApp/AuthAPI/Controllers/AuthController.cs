@@ -1,4 +1,6 @@
 ﻿using Auth.Application.Dto;
+using Auth.Application.Dto.Request;
+using Auth.Application.Dto.Response;
 using Auth.Application.Helper;
 using Auth.Application.Service.EmailService;
 using Auth.Application.Service.UserService;
@@ -27,16 +29,20 @@ namespace AuthAPI.Controllers
         {
             try
             {
-                ResponseDto response = (ResponseDto)await _userService.Create(user);
+                RegisterResponse response = (RegisterResponse)await _userService.Create(user);
                 if(response.Success)
                 {
                     //Email Service!!
+                    var root = _configuration.GetSection("Root:BaseUrl").Value;
                     var message = new Message(
-                        new string[] { "oguzliv@gmail.com" },
-                        "Test email",
-                        "This is the content from our email.");
+                        new string[] { user.Email },
+                        "Verification email",
+                        "Click for verification :\n" + root + "/auth/" + response.Id
+                        ) ;
 
-                    _emailService.SendEmail(message);
+                    await _emailService.SendEmail(message);
+
+                    //_emailService.SendEmail(message);
                     return Ok(response);
                 }
                 else
@@ -47,6 +53,28 @@ namespace AuthAPI.Controllers
             }catch(Exception ex)
             {
                 return BadRequest(ex.Message);
+            }
+        }
+        [HttpGet("{id}")]
+        public async Task<object> Verify([FromRoute] Guid id)
+        {
+
+            //return 0;
+            try
+            {
+                BaseDto response = (BaseDto)await _userService.Verify(id);
+                if (response.Success)
+                {
+                    return Ok(response);
+                }
+                else
+                {
+                    return BadRequest(response);
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"{ex.Message}");
             }
         }
         [HttpPost("login")]
