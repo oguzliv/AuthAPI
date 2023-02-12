@@ -8,7 +8,8 @@ using Microsoft.AspNetCore.Mvc;
 namespace AuthAPI.Controllers
 {
     [Route("users")]
-    [ApiController] 
+    [ApiController]
+    [Authorize]
     public class UserController : ControllerBase
     {
         private readonly IUserService _userService;
@@ -18,6 +19,7 @@ namespace AuthAPI.Controllers
             _userService = userService;
             _configuration = configuration;
         }
+        [Authorize(Roles = "ADMIN")]
         [HttpGet("online")]
         public async Task<object> GetOnline()
         {
@@ -38,6 +40,7 @@ namespace AuthAPI.Controllers
                 return BadRequest(ex.Message);
             }
         }
+        [Authorize(Roles = "ADMIN")]
         [HttpGet("not_verified")]
         public async Task<object> GetNotVerified()
         {
@@ -59,6 +62,7 @@ namespace AuthAPI.Controllers
                 return BadRequest(ex.Message);
             }
         }
+        [Authorize(Roles = "ADMIN")]
         [HttpGet("login_duration")]
         public async Task<object> GetLoginDuration()
         {
