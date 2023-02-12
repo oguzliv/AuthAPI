@@ -26,8 +26,10 @@ namespace Auth.DataAcces.Persistence.Entity
         public string Password { get; set; }
         public string PasswordHash { get; set; }
         public bool IsAdmin { get; set; }
+        public string VerificationToken { get; set; }
 
         public DateTime CreatedAt { get; set; }
+        public DateTime VerifiedAt { get; set; }
         public bool IsVerified { get; set; }
     }
 }

@@ -6,7 +6,9 @@ using System.Threading.Tasks;
 
 namespace Auth.Application.Dto.Request
 {
-    public class LoginDto:BaseRequestDto
+    public class ResetPasswordDto
     {
+        public string NewPassword { get; set; }
+        public string Email { get; set; }
     }
 }

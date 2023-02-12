@@ -19,6 +19,7 @@ namespace Auth.Application.Helper
             {
                 new Claim(ClaimTypes.NameIdentifier, user.Name),
                 new Claim(JwtRegisteredClaimNames.Jti, user.Id.ToString()),
+                new Claim(ClaimTypes.Role, user.IsAdmin ? "ADMIN" : "USER")
             };
 
             var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(_config.GetSection("JWT:Secret").Value));

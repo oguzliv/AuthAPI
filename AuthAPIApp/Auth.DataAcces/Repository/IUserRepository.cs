@@ -10,6 +10,7 @@ namespace Auth.DataAcces.Repository
     public interface IUserRepository:IBaseRepository<User>
     {
         Task<User> GetByEmail(string email);
+        Task<User> GetByToken(string token);
         Task<User> GetOnlineUsers();
 
     }

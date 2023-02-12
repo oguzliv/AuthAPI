@@ -43,6 +43,7 @@ builder.Services.AddControllers(options =>
 }).AddFluentValidation(fv =>
 {
     fv.RegisterValidatorsFromAssemblyContaining<RegisterDto>();
+    fv.RegisterValidatorsFromAssemblyContaining<LoginDto>();
     //fv.RegisterValidatorsFromAssemblyContaining<LoginDtoValidatior>();
     //fv.RegisterValidatorsFromAssemblyContaining<CustomerUpdateDtoValidator>();
     //fv.RegisterValidatorsFromAssemblyContaining<UserDtoValidator>();

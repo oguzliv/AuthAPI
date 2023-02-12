@@ -1,5 +1,4 @@
-﻿using Auth.Application.Dto;
-using Auth.Application.Dto.Request;
+﻿using Auth.Application.Dto.Request;
 using Auth.Application.Dto.Response;
 using Auth.Application.Helper;
 using Auth.Application.Service.EmailService;
@@ -29,7 +28,7 @@ namespace AuthAPI.Controllers
         {
             try
             {
-                RegisterResponse response = (RegisterResponse)await _userService.Create(user);
+                RegisterResponseDto response = (RegisterResponseDto)await _userService.Create(user);
                 if(response.Success)
                 {
                     //Email Service!!
@@ -37,7 +36,7 @@ namespace AuthAPI.Controllers
                     var message = new Message(
                         new string[] { user.Email },
                         "Verification email",
-                        "Click for verification :\n" + root + "/auth/" + response.Id
+                        "Verification token is : " + response.Token
                         ) ;
 
                     await _emailService.SendEmail(message);
@@ -55,14 +54,13 @@ namespace AuthAPI.Controllers
                 return BadRequest(ex.Message);
             }
         }
-        [HttpGet("{id}")]
-        public async Task<object> Verify([FromRoute] Guid id)
+        [HttpPost("{token}")]
+        public async Task<object> Verify([FromBody] string token)
         {
 
-            //return 0;
             try
             {
-                BaseDto response = (BaseDto)await _userService.Verify(id);
+                BaseResponseDto response = (BaseResponseDto)await _userService.Verify(token);
                 if (response.Success)
                 {
                     return Ok(response);
@@ -82,10 +80,14 @@ namespace AuthAPI.Controllers
         {
             try
             {
-                User UserInDb = (User)await _userService.Login(user);
-                if (UserInDb == null)
+                User UserInDb = (User)await _userService.GetUserByEmail(user.Email);
+                if (UserInDb == null || !BCrypt.Net.BCrypt.Verify(user.Password, UserInDb.PasswordHash))
                 {
                     return NotFound("User not found, invalid email or password");
+                }
+                else if(UserInDb.IsVerified == false)
+                {
+                    return BadRequest("User is not verified");
                 }
                 else
                 {
@@ -93,6 +95,25 @@ namespace AuthAPI.Controllers
                 }
             }
             catch(Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+        [HttpPatch()]
+        public async Task<object> ResetPassword([FromBody] ResetPasswordDto newPassword)
+        {
+            try
+            {
+                BaseResponseDto response = (BaseResponseDto)await _userService.ResetPassword(newPassword);
+                if (response.Success)
+                {
+                    return Ok(response);
+                }
+                else
+                {
+                    return BadRequest(response);
+                }
+            }catch(Exception ex)
             {
                 return BadRequest(ex.Message);
             }

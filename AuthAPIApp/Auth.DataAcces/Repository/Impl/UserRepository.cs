@@ -23,5 +23,12 @@ namespace Auth.DataAcces.Repository.Impl
             else return user;
 
         }
+
+        public async Task<User> GetByToken(string token)
+        {
+            var user = await _db.Users.FirstOrDefaultAsync(user => user.VerificationToken == token);
+            if (user == null) { return null; }
+            else return user;
+        }
     }
 }

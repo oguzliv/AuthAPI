@@ -10,7 +10,8 @@ namespace Auth.Application.Service.UserService
     public interface IUserService
     {
         Task<object> Create(RegisterDto user);
-        Task<object> Login(LoginDto user);
-        Task<object> Verify(Guid id);
+        Task<object> ResetPassword(ResetPasswordDto newPassword);  
+        Task<object> Verify(string token);
+        Task<object> GetUserByEmail(string email);
     }
 }

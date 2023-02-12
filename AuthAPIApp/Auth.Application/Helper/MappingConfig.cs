@@ -16,7 +16,6 @@ namespace Auth.Application.Helper
         {
             var mappingConfig = new MapperConfiguration(config =>
             {
-                config.CreateMap<User, UserDto>().ReverseMap();
                 config.CreateMap<User, LoginDto>().ReverseMap(); 
                 config.CreateMap<User, RegisterDto>().ReverseMap();
             });

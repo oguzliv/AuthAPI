@@ -24,103 +24,108 @@ namespace Auth.Application.Service.UserService
         }
         public async Task<object> Create(RegisterDto user)
         {
-            try{
-                var _user = await _userRepository.GetByEmail(user.Email);
+            var _user = await _userRepository.GetByEmail(user.Email);
 
-                if (_user == null)
+            if (_user == null)
+            {
+                _user = _mapper.Map<User>(user);
+                _user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(user.Password);
+                _user.IsAdmin = user.IsAdmin ? true : false;
+                _user.IsVerified = false;
+                _user.Id = Guid.NewGuid();
+                _user.CreatedAt = DateTime.UtcNow;
+                _user.VerificationToken = TokenGenerator();
+
+
+                if (await _userRepository.Create(_user) != null)
                 {
-                    _user = _mapper.Map<User>(user);
-                    _user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(user.Password);
-                    _user.IsAdmin = user.IsAdmin ? true : false;
-                    _user.IsVerified = false;
-                    _user.Id = Guid.NewGuid();
-                    _user.CreatedAt = DateTime.UtcNow;
-                   
-
-                    if(await _userRepository.Create(_user) != null)
+                    return new RegisterResponseDto()
                     {
-                        return new RegisterResponse()
-                        {
-                            Success= true,
-                            Email = user.Email,
-                            Id = _user.Id,
-                            ErrorMessage = ""
-                        };
-                    }
-                    else
-                    {
-                        return new ResponseDto()
-                        {
-                            Success = true,
-                            Data = null,
-                            ErrorMessage = "Could not created user."
-                        };
-                    }
+                        Success = true,
+                        Email = user.Email,
+                        Token = _user.VerificationToken,
+                        ErrorMessage = ""
+                    };
                 }
                 else
                 {
-                    return new ResponseDto()
+                    return new RegisterResponseDto()
                     {
                         Success = false,
-                        ErrorMessage = "User Exists."
+                        ErrorMessage = "Could not created user."
                     };
                 }
             }
-            catch(Exception ex)
+            else
             {
-                return new ResponseDto()
+                return new RegisterResponseDto()
                 {
                     Success = false,
-                    ErrorMessage = ex.Message
+                    ErrorMessage = "User already exists."
                 };
             }
         }
 
-        public async Task<object> Login(LoginDto user)
-
+        public async Task<object> GetUserByEmail(string email)
         {
-            throw new NotImplementedException();
+            var _user = await _userRepository.GetByEmail(email);
+            return _user;
         }
 
-        public async Task<object> Verify(Guid id)
+        public async Task<object> ResetPassword(ResetPasswordDto newPassword)
         {
-            try
+            var _user = await _userRepository.GetByEmail(newPassword.Email);
+
+            if (_user != null)
             {
-                User user = await _userRepository.GetById(id);
-                if (user != null)
-                {
-                    user.IsVerified = true;
-                    await _userRepository.Update(user);
-                    return new BaseDto()
-                    {
-                        Success = true,
-                    }; 
-                }
-                else if (user.IsVerified)
-                {
-                    return new BaseDto()
-                    {
-                        Success = true,
-                        ErrorMessage = "User verified already"
-                    };
-                }
-                else
-                {
-                    return new BaseDto()
-                    {
-                        Success = false,
-                        ErrorMessage = "User is not found"
-                    }; ;
-                }
+                _user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(newPassword.NewPassword);
+                await _userRepository.Update(_user);
+                return new BaseResponseDto() { Success = true };
             }
-            catch(Exception ex)
+            else
             {
-                return new BaseDto()
+                return new BaseResponseDto() { Success = false, ErrorMessage="User not found"};
+            }
+        }
+
+        public async Task<object> Verify(string token)
+        {
+            User user = await _userRepository.GetByToken(token);
+            if (user != null)
+            {
+                user.IsVerified = true;
+                user.VerifiedAt = DateTime.UtcNow;
+                user.VerificationToken = "";
+                await _userRepository.Update(user);
+                return new BaseResponseDto()
+                {
+                    Success = true,
+                };
+            }
+            else if (user.IsVerified)
+            {
+                return new BaseResponseDto()
                 {
                     Success = false,
-                    ErrorMessage = ex.Message
+                    ErrorMessage = "User verified already"
+                };
+            }
+            else
+            {
+                return new BaseResponseDto()
+                {
+                    Success = false,
+                    ErrorMessage = "User is not found"
                 }; ;
             }
+        }
+        private static string TokenGenerator()
+        {
+            Guid g = Guid.NewGuid();
+            string GuidString = Convert.ToBase64String(g.ToByteArray());
+            GuidString = GuidString.Replace("=", "");
+            GuidString = GuidString.Replace("+", "");
+            return GuidString;
         }
     }
 }

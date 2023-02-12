@@ -4,12 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Auth.Application.Dto
+namespace Auth.Application.Dto.Response
 {
-    public class ResponseDto
+    public class BaseResponseDto
     {
         public bool Success { get; set; }
-        public object Data { get; set; }
         public string ErrorMessage { get; set; }
     }
 }
