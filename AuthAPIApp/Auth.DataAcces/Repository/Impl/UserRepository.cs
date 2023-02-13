@@ -52,7 +52,7 @@ namespace Auth.DataAcces.Repository.Impl
                 totalTime += t.Minutes;
             }
 
-             return totalTime/loginTimes.Count/60;
+             return totalTime/loginTimes.Count*60;
 
         }
     }
