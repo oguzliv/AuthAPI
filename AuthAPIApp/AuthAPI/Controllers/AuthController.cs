@@ -56,7 +56,7 @@ namespace AuthAPI.Controllers
             }
         }
         [HttpPost("{token}")]
-        public async Task<object> Verify([FromRoute] string token)
+        public async Task<object> Verify([FromBody] string token)
         {
 
             try
