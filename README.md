@@ -4,7 +4,6 @@
 <p>This project provides login,registering, resetting password and verifying registeration with activation code.</p>
 <p>Sql scripts can be found in the project directory</p>
 <p>All endpoints and authentication are tested with POSTMAN</p>
-<p>Project was started att 11.02.2023 at 11:00  and finished at 12.02.2023 21.30 </p>
 
 <h3>How to run</h3>
 <ul>
